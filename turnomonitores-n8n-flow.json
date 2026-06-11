@@ -1,0 +1,88 @@
+{
+  "name": "TurnoMonitores — Notificacion turno",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "turno",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Recibir turno",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "ok",
+        "options": {}
+      },
+      "id": "node-respond",
+      "name": "Responder 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [480, 180]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.monitor.email }}",
+        "subject": "=Turno {{ $json.body.turno.estadoNuevo }} — {{ $json.body.sala.nombre }} — {{ $json.body.turno.fecha }}",
+        "emailType": "text",
+        "message": "=Hola {{ $json.body.monitor.nombre }},\n\nTe informamos que tu turno de monitoria ha cambiado de estado.\n\nEstado: {{ $json.body.turno.estadoNuevo }}\nSede: {{ $json.body.sala.sede }}\nSala: {{ $json.body.sala.nombre }}\nFecha: {{ $json.body.turno.fecha }}\nHorario: {{ $json.body.turno.horaInicioPlan }} - {{ $json.body.turno.horaFinPlan }}\nHoras planificadas: {{ $json.body.turno.horasPlanificadas }}\n\nUniversidad de Caldas — Sistema TurnoMonitores",
+        "options": {}
+      },
+      "id": "node-mail-monitor",
+      "name": "Correo monitor",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [480, 300],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REEMPLAZAR_CON_ID_CREDENCIAL_GMAIL",
+          "name": "Gmail TurnoMonitores"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.coordinador.email }}",
+        "subject": "=[Aviso coordinador] Turno {{ $json.body.turno.estadoNuevo }} — {{ $json.body.sala.nombre }} — {{ $json.body.turno.fecha }}",
+        "emailType": "text",
+        "message": "=Hola {{ $json.body.coordinador.nombre }},\n\nSe ha registrado un cambio de estado en un turno de tu sede.\n\nMonitor: {{ $json.body.monitor.nombre }} ({{ $json.body.monitor.email }})\nEstado anterior: {{ $json.body.turno.estadoAnterior }}\nEstado nuevo: {{ $json.body.turno.estadoNuevo }}\nSede: {{ $json.body.sala.sede }}\nSala: {{ $json.body.sala.nombre }}\nFecha: {{ $json.body.turno.fecha }}\nHorario: {{ $json.body.turno.horaInicioPlan }} - {{ $json.body.turno.horaFinPlan }}\nHoras planificadas: {{ $json.body.turno.horasPlanificadas }}\n\nUniversidad de Caldas — Sistema TurnoMonitores",
+        "options": {}
+      },
+      "id": "node-mail-coordinador",
+      "name": "Correo coordinador",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [480, 420],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REEMPLAZAR_CON_ID_CREDENCIAL_GMAIL",
+          "name": "Gmail TurnoMonitores"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Recibir turno": {
+      "main": [
+        [
+          { "node": "Responder 200", "type": "main", "index": 0 },
+          { "node": "Correo monitor", "type": "main", "index": 0 },
+          { "node": "Correo coordinador", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
