@@ -8,7 +8,6 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  ConflictException,
   UnprocessableEntityException,
   BadRequestException,
   HttpException,
@@ -39,6 +38,29 @@ const calcularHorasPlanificadas = (inicio: string, fin: string): number => {
   const [h0, m0] = inicio.split(':').map(Number);
   const [h1, m1] = fin.split(':').map(Number);
   return (h1 * 60 + m1 - (h0 * 60 + m0)) / 60;
+};
+
+const diaSemanaMap: Record<string, number> = {
+  domingo: 0, lunes: 1, martes: 2, miércoles: 3, miercoles: 3,
+  jueves: 4, viernes: 5, sábado: 6, sabado: 6,
+};
+
+const dayNameToDate = (dia: string): string => {
+  const targetDay = diaSemanaMap[dia.toLowerCase()];
+  if (targetDay === undefined) return dia;
+  const now = new Date();
+  const currentDay = now.getDay();
+  let diff = targetDay - currentDay;
+  if (diff <= 0) diff += 7;
+  const next = new Date(now);
+  next.setDate(now.getDate() + diff);
+  return next.toISOString().slice(0, 10);
+};
+
+const resolveId = (id: string | number | undefined | null, list: { id: string }[]): string | undefined => {
+  if (id === undefined || id === null) return undefined;
+  if (typeof id === 'number') return list[id - 1]?.id;
+  return String(id);
 };
 
 const notifyWebhook = async (payload: object): Promise<void> => {
@@ -180,21 +202,23 @@ export class TurnoMonitoresController {
 
   @Post('turnos')
   @HttpCode(HttpStatus.CREATED)
-  async crearTurno(
-    @Body()
-    body: {
-      monitorId: string;
-      salaId: string;
-      fecha: string;
-      horaInicioPlan: string;
-      horaFinPlan: string;
-    },
-  ) {
-    const { monitorId, salaId, fecha, horaInicioPlan, horaFinPlan } = body;
+  async crearTurno(@Body() body: Record<string, unknown>) {
+    const b = body as any;
+    const rawMonitorId = b.monitorId ?? b.monitor_id;
+    const rawSalaId = b.salaId ?? b.salonId ?? b.sala_id ?? b.salon_id;
+    const rawFecha = b.fecha ?? b.dia;
+    const rawHoraInicio = b.horaInicioPlan ?? b.horaInicio ?? b.hora_inicio;
+    const rawHoraFin = b.horaFinPlan ?? b.horaFin ?? b.hora_fin;
 
-    if (!monitorId || !salaId || !fecha || !horaInicioPlan || !horaFinPlan) {
+    if (!rawMonitorId || !rawSalaId || !rawFecha || !rawHoraInicio || !rawHoraFin) {
       throw new BadRequestException('Faltan campos obligatorios');
     }
+
+    const monitorId = resolveId(rawMonitorId, monitores) ?? String(rawMonitorId);
+    const salaId = resolveId(rawSalaId, salas) ?? String(rawSalaId);
+    const fecha = dayNameToDate(String(rawFecha));
+    const horaInicioPlan = String(rawHoraInicio);
+    const horaFinPlan = String(rawHoraFin);
 
     const monitor = monitores.find((m) => m.id === monitorId);
     if (!monitor) throw new NotFoundException('Monitor no encontrado');
