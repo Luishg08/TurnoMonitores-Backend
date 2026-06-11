@@ -133,6 +133,28 @@ export class TurnoMonitoresController {
     };
   }
 
+  @Get('turnos/pendientes')
+  getTurnosPendientes() {
+    return turnos
+      .filter((t) => t.estado === 'pendiente_aprobacion')
+      .map((t) => {
+        const monitor = monitores.find((m) => m.id === t.monitorId);
+        const sala = salas.find((s) => s.id === t.salaId);
+        const sede = sala ? sedes.find((se) => se.id === sala.sedeId) : null;
+        return {
+          id: t.id,
+          monitor: monitor ? { id: monitor.id, nombre: monitor.nombre, email: monitor.email } : null,
+          sala: sala ? { id: sala.id, nombre: sala.nombre } : null,
+          sede: sede ? { id: sede.id, nombre: sede.nombre } : null,
+          fecha: t.fecha,
+          horaInicioPlan: t.horaInicioPlan,
+          horaFinPlan: t.horaFinPlan,
+          horasPlanificadas: t.horasPlanificadas,
+          createdAt: t.createdAt,
+        };
+      });
+  }
+
   @Post('turnos')
   @HttpCode(HttpStatus.CREATED)
   async crearTurno(
