@@ -48,7 +48,64 @@ GET /salas/sede-lans-001/disponibilidad
 
 ---
 
-## 2. Crear un turno
+## 2. Listar monitores
+
+```
+GET /monitores
+```
+
+**Respuesta 200:**
+```json
+[
+  { "id": "monitor-001", "nombre": "Mariana López", "email": "mariana.lopez35806@ucaldas.edu.co", "horasSemestre": 18.5 },
+  { "id": "monitor-002", "nombre": "Luis Henao", "email": "luis.henao37085@ucaldas.edu.co", "horasSemestre": 32.0 }
+]
+```
+
+---
+
+## 3. Listar salones
+
+```
+GET /salones
+```
+
+**Respuesta 200:**
+```json
+[
+  { "id": "sala-lans-001", "nombre": "Sala E", "sede": { "id": "sede-lans-001", "nombre": "LANS" }, "esRestringida": false },
+  { "id": "sala-lans-mac", "nombre": "MAC", "sede": { "id": "sede-lans-001", "nombre": "LANS" }, "esRestringida": true }
+]
+```
+
+---
+
+## 4. Listar turnos pendientes de aprobación
+
+```
+GET /turnos/pendientes
+```
+
+**Respuesta 200:**
+```json
+[
+  {
+    "id": "a3dc242f-...",
+    "monitor": { "id": "monitor-001", "nombre": "Mariana López", "email": "mariana.lopez35806@ucaldas.edu.co" },
+    "sala": { "id": "sala-lans-001", "nombre": "Sala E" },
+    "sede": { "id": "sede-lans-001", "nombre": "LANS" },
+    "fecha": "2026-06-12",
+    "horaInicioPlan": "08:00",
+    "horaFinPlan": "10:00",
+    "horasPlanificadas": 2,
+    "createdAt": "2026-06-11T17:28:05.870Z"
+  }
+]
+```
+
+---
+
+## 5. Crear un turno
 
 ```
 POST /turnos
@@ -88,7 +145,7 @@ Content-Type: application/json
 
 ---
 
-## 3. Cambiar estado de un turno
+## 6. Cambiar estado de un turno
 
 ```
 PATCH /turnos/{id}/estado
@@ -131,7 +188,7 @@ Content-Type: application/json
 
 ---
 
-## 4. Seed data — IDs disponibles para pruebas
+## 7. Seed data — IDs disponibles para pruebas
 
 ### Monitores
 | id | nombre | email |
@@ -143,17 +200,17 @@ Content-Type: application/json
 ### Salas
 | id | nombre | sede |
 |---|---|---|
-| `sala-lans-001` | Sala 1 | LANS |
-| `sala-lans-002` | Sala 2 | LANS |
+| `sala-lans-001` | Sala E | LANS |
+| `sala-lans-002` | Sala CISCO | LANS |
 | `sala-lans-mac` | MAC (restringida) | LANS |
-| `sala-central-001` | Sala 1 | CENTRAL |
-| `sala-central-002` | Sala 2 | CENTRAL |
+| `sala-central-001` | Sala J | CENTRAL |
+| `sala-central-002` | Sala I | CENTRAL |
 | `sala-central-mac` | MAC (restringida) | CENTRAL |
 
 ### Coordinadores
 | id | nombre | sede |
 |---|---|---|
-| `coordinador-001` | Ana Restrepo | LANS |
+| `coordinador-001` | Luis Henao | LANS |
 
 ### Turno semilla
 | id | estado |
@@ -162,7 +219,7 @@ Content-Type: application/json
 
 ---
 
-## 5. Formato de errores (global)
+## 8. Formato de errores (global)
 
 Toda respuesta de error sigue esta estructura:
 ```json
