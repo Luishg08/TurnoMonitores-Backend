@@ -98,6 +98,29 @@ const buildWebhookPayload = (turno: Turno, estadoAnterior: EstadoTurno) => {
 
 @Controller()
 export class TurnoMonitoresController {
+  @Get('monitores')
+  getMonitores() {
+    return monitores.map((m) => ({
+      id: m.id,
+      nombre: m.nombre,
+      email: m.email,
+      horasSemestre: m.horasSemestre,
+    }));
+  }
+
+  @Get('salones')
+  getSalones() {
+    return salas.map((s) => {
+      const sede = sedes.find((se) => se.id === s.sedeId);
+      return {
+        id: s.id,
+        nombre: s.nombre,
+        sede: sede ? { id: sede.id, nombre: sede.nombre } : null,
+        esRestringida: s.esRestringida,
+      };
+    });
+  }
+
   @Get('salas/:sedeId/disponibilidad')
   getSalasDisponibilidad(@Param('sedeId') sedeId: string) {
     const sede = sedes.find((s) => s.id === sedeId);
