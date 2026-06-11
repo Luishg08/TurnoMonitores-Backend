@@ -60,11 +60,11 @@ export const sedes: Sede[] = [
 ];
 
 export const salas: Sala[] = [
-  { id: 'sala-lans-001', sedeId: 'sede-lans-001', nombre: 'Sala 1', esRestringida: false },
-  { id: 'sala-lans-002', sedeId: 'sede-lans-001', nombre: 'Sala 2', esRestringida: false },
+  { id: 'sala-lans-001', sedeId: 'sede-lans-001', nombre: 'Sala E', esRestringida: false },
+  { id: 'sala-lans-002', sedeId: 'sede-lans-001', nombre: 'Sala CISCO', esRestringida: false },
   { id: 'sala-lans-mac', sedeId: 'sede-lans-001', nombre: 'MAC', esRestringida: true },
-  { id: 'sala-central-001', sedeId: 'sede-central-001', nombre: 'Sala 1', esRestringida: false },
-  { id: 'sala-central-002', sedeId: 'sede-central-001', nombre: 'Sala 2', esRestringida: false },
+  { id: 'sala-central-001', sedeId: 'sede-central-001', nombre: 'Sala J', esRestringida: false },
+  { id: 'sala-central-002', sedeId: 'sede-central-001', nombre: 'Sala I', esRestringida: false },
   { id: 'sala-central-mac', sedeId: 'sede-central-001', nombre: 'MAC', esRestringida: true },
 ];
 
