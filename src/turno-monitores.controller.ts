@@ -62,7 +62,9 @@ const buildWebhookPayload = (turno: Turno, estadoAnterior: EstadoTurno) => {
   const monitor = monitores.find((m) => m.id === turno.monitorId);
   const coordinador = turno.coordinadorId
     ? coordinadores.find((c) => c.id === turno.coordinadorId)
-    : null;
+    : sede
+      ? coordinadores.find((c) => c.sedeId === sede.id)
+      : null;
 
   return {
     evento: 'turno.estado_cambiado',

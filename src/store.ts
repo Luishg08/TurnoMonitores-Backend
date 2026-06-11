@@ -96,8 +96,8 @@ export const coordinadores: Coordinador[] = [
   {
     id: 'coordinador-001',
     usuarioId: 'usuario-003',
-    nombre: 'Ana Restrepo',
-    email: 'ana.restrepo@ucaldas.edu.co',
+    nombre: 'Luis Henao',
+    email: 'luis.henao37085@ucaldas.edu.co',
     sedeId: 'sede-lans-001',
   },
 ];
